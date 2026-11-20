@@ -30,7 +30,7 @@ const untested = (sum: Summary): string =>
 const sourceNote = (source: string): string =>
   source === 'tts'
     ? 'These clips are synthetic, made with the built-in Mac voice to prove the pipeline works.'
-    : `Sophie read each sentence into <code>${esc(source)}/</code>. Each file is named with the words she actually said, which is the answer key. A ✓ means the model’s answer matched what she really said.`;
+    : `A 5-year-old girl read each sentence aloud. Each recording is labelled with the words she actually said, which is the answer key. A ✓ means the model’s answer matched what she really said.`;
 
 export const renderPage = (sum: Summary, source: string): string => `<title>Pasketti spike results</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -38,8 +38,9 @@ export const renderPage = (sum: Summary, source: string): string => `<title>Pask
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Noto+Sans&display=swap" rel="stylesheet">
 <style>${pageCss}</style>
 <main>
+  <p class="kicker">Pasketti model test</p>
   <h1>Can the model hear reading mistakes?</h1>
-  <p class="sub">A child reads a sentence. Does the model notice when she says a word wrong, and stay quiet when she gets it right?</p>
+  <p class="sub">We tested the Pasketti phonetic speech model on a 5-year-old girl reading simple sentences aloud. Does it notice when she says a word wrong, and stay quiet when she gets it right?</p>
   <section class="verdict">
     <div class="badge ${sum.verdict.replace(/\s/g, '-')}">${sum.verdict}</div>
     <p class="answer">${headline[sum.verdict]}</p>
@@ -53,9 +54,15 @@ export const renderPage = (sum: Summary, source: string): string => `<title>Pask
   <h2>Each recording</h2>
   <p class="legend"><span class="mark good">✓</span> model got it right <span class="mark bad">✗</span> model got it wrong</p>
   <div class="scroll"><table>
-    <thead><tr><th></th><th>Book says</th><th>Sophie said</th><th>What happened</th></tr></thead>
+    <thead><tr><th></th><th>Book says</th><th>She said</th><th>What happened</th></tr></thead>
     <tbody>${sum.rows.map(row).join('')}</tbody>
   </table></div>
   <div class="note">${sourceNote(source)}</div>
+  <h2>About this test</h2>
+  <ul class="links">
+    <li>The model: <a href="https://huggingface.co/drivendata/pasketti-phonetic">drivendata/pasketti-phonetic on Hugging Face</a>. It listens to speech and writes down the sounds it hears (IPA), not the words, so it can catch a wrong sound even when the result isn’t a real word.</li>
+    <li>The test plan: <a href="https://claude.ai/artifact/KhN7XgiJEmzCNhLGmXKWmB?sk=GMBxm1upWcfwASNM_btUMw">Pasketti spike checklist</a>.</li>
+    <li>How it ran: on a Mac laptop, no cloud. Each recording is turned into sounds, then compared with what she said and what the book says. The model is right when its sounds are closer to what she actually said.</li>
+  </ul>
 </main>
 `;

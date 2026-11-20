@@ -46,6 +46,10 @@ th { color: var(--muted); font-weight: 700; font-size: .78rem; text-transform: u
 tr:last-child td { border-bottom: 0; }
 .sent { font-weight: 700; }
 .skill { color: var(--muted); font-size: .82rem; }
+.kicker { color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; margin: 0 0 4px; }
+a { color: var(--title); font-weight: 700; }
+.links { color: var(--muted); padding-left: 20px; margin: 0; }
+.links li { margin-bottom: 8px; }
 .ipa { font-family: "Noto Sans", "Charis SIL", "Doulos SIL", system-ui, sans-serif; }
 .exp { color: var(--muted); font-size: .82rem; }
 .answer { font-size: 1.25rem; font-weight: 800; margin: 0; }
