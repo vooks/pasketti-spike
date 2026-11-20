@@ -32,6 +32,11 @@ const sourceNote = (source: string): string =>
     ? 'These clips are synthetic, made with the built-in Mac voice to prove the pipeline works.'
     : `A 5-year-old girl read each sentence aloud. Each recording is labelled with the words she actually said, which is the answer key. A ✓ means the model’s answer matched what she really said.`;
 
+const subtitle = (source: string): string =>
+  source === 'tts'
+    ? 'A pipeline check: the built-in Mac voice reads each sentence once correctly and once with a planted mistake. Does the model notice the mistake, and stay quiet on the correct reading?'
+    : 'We tested the Pasketti phonetic speech model on a 5-year-old girl reading simple sentences aloud. Does it notice when she says a word wrong, and stay quiet when she gets it right?';
+
 export const renderPage = (sum: Summary, source: string): string => `<title>Pasketti spike results</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +45,7 @@ export const renderPage = (sum: Summary, source: string): string => `<title>Pask
 <main>
   <p class="kicker">Pasketti model test</p>
   <h1>Can the model hear reading mistakes?</h1>
-  <p class="sub">We tested the Pasketti phonetic speech model on a 5-year-old girl reading simple sentences aloud. Does it notice when she says a word wrong, and stay quiet when she gets it right?</p>
+  <p class="sub">${subtitle(source)}</p>
   <section class="verdict">
     <div class="badge ${sum.verdict.replace(/\s/g, '-')}">${sum.verdict}</div>
     <p class="answer">${headline[sum.verdict]}</p>

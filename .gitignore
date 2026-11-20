@@ -1,5 +1,3 @@
 .venv/
-out/
 __pycache__/
-clips/*
-!clips/.gitkeep
+.DS_Store

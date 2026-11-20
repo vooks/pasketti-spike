@@ -1,0 +1,186 @@
+<title>Pasketti spike results</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Noto+Sans&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f8fb; --surface: #ffffff; --ink: #1c2428; --muted: #5f6f78; --line: #dde5ea;
+  --accent: #03a9f4; --title: #286abe; --ok: #6a9e3f; --bad: #c22e2d; --warn: #fb8c00;
+  --ok-bg: rgba(106,158,63,.12); --bad-bg: rgba(194,46,45,.1); --warn-bg: rgba(251,140,0,.12);
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { 
+  --bg: #1c2428; --surface: #263238; --ink: #eef3f6; --muted: #9fb0b9; --line: #37474f;
+  --accent: #4fc3f7; --title: #8ab4f8; --ok: #8bc34a; --bad: #ef5350; --warn: #ffa726;
+  --ok-bg: rgba(139,195,74,.14); --bad-bg: rgba(239,83,80,.14); --warn-bg: rgba(255,167,38,.14); } }
+:root[data-theme="dark"] { 
+  --bg: #1c2428; --surface: #263238; --ink: #eef3f6; --muted: #9fb0b9; --line: #37474f;
+  --accent: #4fc3f7; --title: #8ab4f8; --ok: #8bc34a; --bad: #ef5350; --warn: #ffa726;
+  --ok-bg: rgba(139,195,74,.14); --bad-bg: rgba(239,83,80,.14); --warn-bg: rgba(255,167,38,.14); }
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Nunito", "Proxima Soft", ui-rounded, system-ui, sans-serif; line-height: 1.5;
+}
+main {
+  max-width: 1040px; margin: 0 auto;
+  padding: 32px max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px));
+}
+h1 { color: var(--title); font-size: 1.9rem; margin: 0 0 4px; font-weight: 800; }
+h2 { font-size: 1.15rem; margin: 32px 0 12px; font-weight: 800; }
+.sub { color: var(--muted); margin: 0 0 24px; }
+.verdict {
+  display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px 24px;
+}
+.badge { font-size: 2rem; font-weight: 900; padding: 10px 22px; border-radius: 14px; letter-spacing: .02em; }
+.badge.GO { color: var(--ok); background: var(--ok-bg); }
+.badge.UNCLEAR { color: var(--warn); background: var(--warn-bg); }
+.badge.PIVOT { color: var(--bad); background: var(--bad-bg); }
+.badge.NO-MISREADS-YET { color: var(--warn); background: var(--warn-bg); font-size: 1.2rem; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.stat b { display: block; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: .9rem; }
+.rule { color: var(--muted); font-size: .85rem; grid-column: 1 / -1; margin: 0; }
+.scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: .92rem; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; }
+tr:last-child td { border-bottom: 0; }
+.sent { font-weight: 700; }
+.skill { color: var(--muted); font-size: .82rem; }
+.kicker { color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; margin: 0 0 4px; }
+a { color: var(--title); font-weight: 700; }
+.links { color: var(--muted); padding-left: 20px; margin: 0; }
+.links li { margin-bottom: 8px; }
+.ipa { font-family: "Noto Sans", "Charis SIL", "Doulos SIL", system-ui, sans-serif; }
+.exp { color: var(--muted); font-size: .82rem; }
+.answer { font-size: 1.25rem; font-weight: 800; margin: 0; }
+.stats { grid-column: 1 / -1; }
+.mark { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font-weight: 900; }
+.mark.good { color: var(--ok); background: var(--ok-bg); }
+.mark.bad { color: var(--bad); background: var(--bad-bg); }
+.legend { color: var(--muted); font-size: .9rem; display: flex; gap: 8px; align-items: center; margin: 0 0 12px; }
+.legend .mark { width: 22px; height: 22px; font-size: .8rem; margin-left: 8px; }
+.legend .mark:first-child { margin-left: 0; }
+details summary { color: var(--muted); font-size: .8rem; cursor: pointer; margin-top: 4px; }
+table { min-width: 620px; }
+.chip { display: inline-block; padding: 2px 10px; border-radius: 999px; font-weight: 800; font-size: .8rem; }
+.chip.good { color: var(--ok); background: var(--ok-bg); }
+.chip.bad { color: var(--bad); background: var(--bad-bg); }
+.chip.none { color: var(--warn); background: var(--warn-bg); }
+.note {
+  margin-top: 24px; padding: 14px 18px; border-left: 4px solid var(--accent);
+  background: var(--surface); border-radius: 0 12px 12px 0; color: var(--muted);
+}
+.note b { color: var(--ink); }
+@media (max-width: 560px) { .verdict { grid-template-columns: 1fr; } }
+</style>
+<main>
+  <p class="kicker">Pasketti model test</p>
+  <h1>Can the model hear reading mistakes?</h1>
+  <p class="sub">A pipeline check: the built-in Mac voice reads each sentence once correctly and once with a planted mistake. Does the model notice the mistake, and stay quiet on the correct reading?</p>
+  <section class="verdict">
+    <div class="badge GO">GO</div>
+    <p class="answer">Yes. The model can tell when a child misreads a word.</p>
+    <div class="stats">
+      <div class="stat"><b>7 of 8</b><span>mistakes spotted<br>(higher is better)</span></div>
+      <div class="stat"><b>0 of 8</b><span>correct readings wrongly flagged<br>(lower is better)</span></div>
+    </div>
+    <p class="rule">GO means the model spots at least 3 in 4 mistakes. Under half means pick a different approach.</p>
+    
+  </section>
+  <h2>Each recording</h2>
+  <p class="legend"><span class="mark good">✓</span> model got it right <span class="mark bad">✗</span> model got it wrong</p>
+  <div class="scroll"><table>
+    <thead><tr><th></th><th>Book says</th><th>She said</th><th>What happened</th></tr></thead>
+    <tbody><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">The cape is red.</div></td>
+  <td><div class="sent">“the cape is red”</div><div class="skill">read correctly</div></td>
+  <td><div>She read it correctly, and the model agreed.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ðə ke͡ɪk ɪz ɹɛd</span> · she said <span class="ipa">ðə keɪp ɪz ɹɛd</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">The cape is red.</div></td>
+  <td><div class="sent">“the cap is red”</div><div class="skill">made a mistake</div></td>
+  <td><div>She said “cap” instead of “cape”, and the model heard it.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ðə kæp ɪz ɹɛd</span> · she said <span class="ipa">ðə kæp ɪz ɹɛd</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">I can ride a bike.</div></td>
+  <td><div class="sent">“i can ride a bike”</div><div class="skill">read correctly</div></td>
+  <td><div>She read it correctly, and the model agreed.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ɑ͡ɪ kæn ɹɑ͡ɪd ə bɑ͡ɪk</span> · she said <span class="ipa">ɑɪ kæn ɹɑɪd ə bɑɪk</span></div></details></td>
+</tr><tr class="miss">
+  <td><span class="mark bad" aria-label="Model was wrong">✗</span></td>
+  <td><div class="sent">I can ride a bike.</div></td>
+  <td><div class="sent">“i can rid a bike”</div><div class="skill">made a mistake</div></td>
+  <td><div>She said “rid” instead of “ride”, but the model heard the book’s words instead.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ɑ͡ɪ kæn ɹɑ͡ɪd ə bɑ͡ɪk</span> · she said <span class="ipa">ɑɪ kæn ɹɪd ə bɑɪk</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">The note is on the desk.</div></td>
+  <td><div class="sent">“the note is on the desk”</div><div class="skill">read correctly</div></td>
+  <td><div>She read it correctly, and the model agreed.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ðə no͡t ɪz ɑn ðə dɛsk</span> · she said <span class="ipa">ðə noʊt ɪz ɑn ðə dɛsk</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">The note is on the desk.</div></td>
+  <td><div class="sent">“the not is on the desk”</div><div class="skill">made a mistake</div></td>
+  <td><div>She said “not” instead of “note”, and the model heard it.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ðə nɑt ɪz ɑn ðə dɛsk</span> · she said <span class="ipa">ðə nɑt ɪz ɑn ðə dɛsk</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">A ship is on the sea.</div></td>
+  <td><div class="sent">“a ship is on the sea”</div><div class="skill">read correctly</div></td>
+  <td><div>She read it correctly, and the model agreed.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ə ʃɪp ɪz ɑn ðə si</span> · she said <span class="ipa">ə ʃɪp ɪz ɑn ðə si</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">A ship is on the sea.</div></td>
+  <td><div class="sent">“a sip is on the sea”</div><div class="skill">made a mistake</div></td>
+  <td><div>She said “sip” instead of “ship”, and the model heard it.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ə sɪp ɪz ɑn ðə si</span> · she said <span class="ipa">ə sɪp ɪz ɑn ðə si</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">The chin is wet.</div></td>
+  <td><div class="sent">“the chin is wet”</div><div class="skill">read correctly</div></td>
+  <td><div>She read it correctly, and the model agreed.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ðə ʧɪn ɪz wɛt</span> · she said <span class="ipa">ðə ʧɪn ɪz wɛt</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">The chin is wet.</div></td>
+  <td><div class="sent">“the tin is wet”</div><div class="skill">made a mistake</div></td>
+  <td><div>She said “tin” instead of “chin”, and the model heard it.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ðətɪn ɪz wɛt</span> · she said <span class="ipa">ðə tɪn ɪz wɛt</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">I see a frog.</div></td>
+  <td><div class="sent">“i see a frog”</div><div class="skill">read correctly</div></td>
+  <td><div>She read it correctly, and the model agreed.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ɑ͡ɪ si ə fɹɑg</span> · she said <span class="ipa">ɑɪ si ə fɹɑg</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">I see a frog.</div></td>
+  <td><div class="sent">“i see a fog”</div><div class="skill">made a mistake</div></td>
+  <td><div>She said “fog” instead of “frog”, and the model heard it.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ɑ͡ɪ si ə fɑg</span> · she said <span class="ipa">ɑɪ si ə fɑg</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">The dog ran fast.</div></td>
+  <td><div class="sent">“the dog ran fast”</div><div class="skill">read correctly</div></td>
+  <td><div>She read it correctly, and the model agreed.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ðə dɑg ɹæn fæst</span> · she said <span class="ipa">ðə dɑg ɹæn fæst</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">The dog ran fast.</div></td>
+  <td><div class="sent">“the dog ran fat”</div><div class="skill">made a mistake</div></td>
+  <td><div>She said “fat” instead of “fast”, and the model heard it.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ðə dɑg ɹæn fæt</span> · she said <span class="ipa">ðə dɑg ɹæn fæt</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">She has a big hat.</div></td>
+  <td><div class="sent">“she has a big hat”</div><div class="skill">read correctly</div></td>
+  <td><div>She read it correctly, and the model agreed.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ʃi hæz ə bɪg hæt</span> · she said <span class="ipa">ʃi hæz ə bɪg hæt</span></div></details></td>
+</tr><tr class="ok">
+  <td><span class="mark good" aria-label="Model was right">✓</span></td>
+  <td><div class="sent">She has a big hat.</div></td>
+  <td><div class="sent">“she has a bag hat”</div><div class="skill">made a mistake</div></td>
+  <td><div>She said “bag” instead of “big”, and the model heard it.</div><details><summary>Sounds</summary><div class="exp">Model heard <span class="ipa">ʃi hæz ə bæg hæt</span> · she said <span class="ipa">ʃi hæz ə bæg hæt</span></div></details></td>
+</tr></tbody>
+  </table></div>
+  <div class="note">These clips are synthetic, made with the built-in Mac voice to prove the pipeline works.</div>
+  <h2>About this test</h2>
+  <ul class="links">
+    <li>The model: <a href="https://huggingface.co/drivendata/pasketti-phonetic">drivendata/pasketti-phonetic on Hugging Face</a>. It listens to speech and writes down the sounds it hears (IPA), not the words, so it can catch a wrong sound even when the result isn’t a real word.</li>
+    <li>The test plan: <a href="https://claude.ai/artifact/KhN7XgiJEmzCNhLGmXKWmB?sk=GMBxm1upWcfwASNM_btUMw">Pasketti spike checklist</a>.</li>
+    <li>How it ran: on a Mac laptop, no cloud. Each recording is turned into sounds, then compared with what she said and what the book says. The model is right when its sounds are closer to what she actually said.</li>
+  </ul>
+</main>
