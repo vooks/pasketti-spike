@@ -1,3 +1,5 @@
 .venv/
 out/
 __pycache__/
+clips/*
+!clips/.gitkeep

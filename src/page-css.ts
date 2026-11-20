@@ -34,6 +34,7 @@ h2 { font-size: 1.15rem; margin: 32px 0 12px; font-weight: 800; }
 .badge.GO { color: var(--ok); background: var(--ok-bg); }
 .badge.UNCLEAR { color: var(--warn); background: var(--warn-bg); }
 .badge.PIVOT { color: var(--bad); background: var(--bad-bg); }
+.badge.NO-MISREADS-YET { color: var(--warn); background: var(--warn-bg); font-size: 1.2rem; }
 .stats { display: flex; flex-wrap: wrap; gap: 8px 28px; }
 .stat b { display: block; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
 .stat span { color: var(--muted); font-size: .9rem; }

@@ -17,9 +17,9 @@ REPO = "drivendata/pasketti-phonetic"
 def main() -> None:
     clips_dir = Path(sys.argv[1])
     out_path = Path(sys.argv[2])
-    paths = sorted(clips_dir.glob("*.wav"))
+    paths = sorted(p for p in clips_dir.iterdir() if p.suffix.lower() in {".wav", ".mp3", ".m4a"})
     if not paths:
-        sys.exit(f"No .wav files in {clips_dir}")
+        sys.exit(f"No .wav, .mp3 or .m4a files in {clips_dir}")
 
     processor = Wav2Vec2Processor.from_pretrained(REPO)
     model = WavLMForCTC.from_pretrained(REPO).eval()
