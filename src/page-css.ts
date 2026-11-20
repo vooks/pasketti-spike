@@ -48,6 +48,16 @@ tr:last-child td { border-bottom: 0; }
 .skill { color: var(--muted); font-size: .82rem; }
 .ipa { font-family: "Noto Sans", "Charis SIL", "Doulos SIL", system-ui, sans-serif; }
 .exp { color: var(--muted); font-size: .82rem; }
+.answer { font-size: 1.25rem; font-weight: 800; margin: 0; }
+.stats { grid-column: 1 / -1; }
+.mark { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font-weight: 900; }
+.mark.good { color: var(--ok); background: var(--ok-bg); }
+.mark.bad { color: var(--bad); background: var(--bad-bg); }
+.legend { color: var(--muted); font-size: .9rem; display: flex; gap: 8px; align-items: center; margin: 0 0 12px; }
+.legend .mark { width: 22px; height: 22px; font-size: .8rem; margin-left: 8px; }
+.legend .mark:first-child { margin-left: 0; }
+details summary { color: var(--muted); font-size: .8rem; cursor: pointer; margin-top: 4px; }
+table { min-width: 620px; }
 .chip { display: inline-block; padding: 2px 10px; border-radius: 999px; font-weight: 800; font-size: .8rem; }
 .chip.good { color: var(--ok); background: var(--ok-bg); }
 .chip.bad { color: var(--bad); background: var(--bad-bg); }
